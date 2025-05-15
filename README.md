@@ -1,5 +1,5 @@
-# finger-painting
-![Finger Painting Interface](demo.gif)
+# Finger Painting
+![Finger Painting Interface](finger_paint.gif)
 
 # How to Download
 ```
