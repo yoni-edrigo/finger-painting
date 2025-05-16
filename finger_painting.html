@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +18,12 @@
             --glow: 0 0 10px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: var(--dark-bg);
             color: white;
@@ -80,9 +86,17 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
         }
 
         .status-text {
@@ -123,6 +137,18 @@
             z-index: 2;
         }
 
+        #video-container .listening {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            font-size: 1.5rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+            z-index: 2;
+            background: black;
+            padding: '10px'
+        }
+
         #video {
             width: 100%;
             height: 100%;
@@ -139,16 +165,27 @@
             overflow: hidden;
         }
 
-        .canvas-container::before {
-            content: "VISUAL PROCESSING";
+        .canvas-container .instructions {
             position: absolute;
             top: 5px;
             left: 5px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             color: var(--neon-blue);
             text-shadow: 0 0 5px var(--neon-blue);
             z-index: 2;
         }
+
+        .canvas-container .current-color {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+            z-index: 2;
+        }
+
+
 
         canvas {
             position: absolute;
@@ -177,8 +214,13 @@
         }
 
         @keyframes scanline {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100%; }
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 0 100%;
+            }
         }
 
         .glitch {
@@ -195,12 +237,29 @@
         }
 
         @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
         }
 
         .corner {
@@ -213,10 +272,33 @@
             z-index: 6;
         }
 
-        .corner-tl { top: -1px; left: -1px; border-top-width: 3px; border-left-width: 3px; }
-        .corner-tr { top: -1px; right: -1px; border-top-width: 3px; border-right-width: 3px; }
-        .corner-bl { bottom: -1px; left: -1px; border-bottom-width: 3px; border-left-width: 3px; }
-        .corner-br { bottom: -1px; right: -1px; border-bottom-width: 3px; border-right-width: 3px; }
+        .corner-tl {
+            top: -1px;
+            left: -1px;
+            border-top-width: 3px;
+            border-left-width: 3px;
+        }
+
+        .corner-tr {
+            top: -1px;
+            right: -1px;
+            border-top-width: 3px;
+            border-right-width: 3px;
+        }
+
+        .corner-bl {
+            bottom: -1px;
+            left: -1px;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+        }
+
+        .corner-br {
+            bottom: -1px;
+            right: -1px;
+            border-bottom-width: 3px;
+            border-right-width: 3px;
+        }
 
         .footer {
             padding: 10px 15px;
@@ -257,8 +339,38 @@
         }
 
         @media (max-width: 768px) {
-            #container { flex-direction: column; }
-            .title { font-size: 1.2rem; }
+            #container {
+                flex-direction: column;
+            }
+
+            .title {
+                font-size: 1.2rem;
+            }
+        }
+
+        #colorStatus {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: var(--neon-blue);
+        }
+
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        #cc {
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
     <!-- External Libraries -->
@@ -266,28 +378,28 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/build/three.min.js"></script>
 </head>
+
 <body>
     <div class="header">
         <div class="title">FINGER PAINT INTERFACE v0.0.1</div>
         <div class="status">
             <div class="status-indicator"></div>
-            <div class="status-text">SYSTEM ACTIVE</div>
             <div id="drawingStatus"></div>
         </div>
     </div>
 
     <div id="container">
         <div id="video-container">
+            <div id="video-cc" class="listening">Listening...</div>
             <video id="video" width="640" height="480" autoplay playsinline></video>
             <div class="corner corner-tl"></div>
             <div class="corner corner-tr"></div>
             <div class="corner corner-bl"></div>
             <div class="corner corner-br"></div>
-            <div class="scanlines"></div>
-            <div class="glitch"></div>
         </div>
 
         <div class="canvas-container">
+            <div class="instructions">VOICE COMMANDS:<br><br>- RENDER, CHANGE PAINT COLOR TO [COLOR]<br>- RENDER, EXPORT IMAGE<br>- RENDER, ERASE ALL</div>
             <canvas id="canvas" width="800" height="800"></canvas>
             <canvas id="threejs" width="800" height="800"></canvas>
             <canvas id="cursorCanvas" width="800" height="800" style="pointer-events: none;"></canvas>
@@ -295,18 +407,25 @@
             <div class="corner corner-tr"></div>
             <div class="corner corner-bl"></div>
             <div class="corner corner-br"></div>
-            <div class="scanlines"></div>
-            <div class="glitch"></div>
+            <div id="colorStatus" class="current-color">
+                <span>Color: </span>
+                <span id="colorName"></span>
+                <div id="colorIndicator" class="color-indicator"></div>
+            </div>
         </div>
     </div>
 
     <div class="footer">
-        <a target="_blank" href="https://github.com/gemsjohn/finger-painting" style="font-family: 'system-ui', sans-serif; position: fixed; bottom: -1px; left: -1px; padding: 7px; font-size: 14px; font-weight: bold; background: #fff; color: #000; text-decoration: none; z-index: 10; border-top-right-radius: 12px; z-index: 10000; border: 1px solid #fff;">🖥️ Code</a>
-        <a target="_blank" href="https://buymeacoffee.com/renderfiction" style="font-family: 'system-ui', sans-serif; position: fixed; bottom: -1px; right: -1px; padding: 7px; font-size: 14px; font-weight: bold; background: #fff; color: #000; text-decoration: none; z-index: 10; border-top-left-radius: 12px; z-index: 10000; border: 1px solid #fff;">❤️ Support my open source projects</a>
+        <a target="_blank" href="https://github.com/gemsjohn/finger-painting"
+            style="font-family: 'system-ui', sans-serif; position: fixed; bottom: -1px; left: -1px; padding: 7px; font-size: 14px; font-weight: bold; background: #fff; color: #000; text-decoration: none; z-index: 10; border-top-right-radius: 12px; z-index: 10000; border: 1px solid #fff;">🖥️
+            Code</a>
+        <a target="_blank" href="https://buymeacoffee.com/renderfiction"
+            style="font-family: 'system-ui', sans-serif; position: fixed; bottom: -1px; right: -1px; padding: 7px; font-size: 14px; font-weight: bold; background: #fff; color: #000; text-decoration: none; z-index: 10; border-top-left-radius: 12px; z-index: 10000; border: 1px solid #fff;">❤️
+            Support my open source projects</a>
     </div>
 
     <script>
-        // Canvas setup
+        // Canvas setup (unchanged)
         const canvas = document.getElementById('canvas');
         const threejsCanvas = document.getElementById('threejs');
         const cursorCanvas = document.getElementById('cursorCanvas');
@@ -315,6 +434,9 @@
         ctx.lineWidth = 5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+
+        // Add dynamic paint color
+        let currentColor = 'white';
 
         // Drawing status element
         const drawingStatus = document.getElementById('drawingStatus');
@@ -377,7 +499,7 @@
         });
         cameraFeed.start();
 
-        // State variables
+        // State variables (unchanged)
         let wasDetected = false;
         let drawingHandLabel = 'Left';
         let prevSmoothedX = null;
@@ -401,7 +523,30 @@
             return openCount >= 3;
         }
 
-        // Results Processing and Rendering
+        // Function to export canvas as transparent PNG
+        function exportCanvasAsPNG() {
+            // Create a temporary canvas to ensure transparent background
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            // Draw the original canvas content onto the temporary canvas
+            tempCtx.drawImage(canvas, 0, 0);
+
+            // Get the data URL for the PNG
+            const dataURL = tempCanvas.toDataURL('image/png');
+
+            // Create a download link
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'finger_painting_export.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Results Processing and Rendering (unchanged)
         function onResults(results) {
             let controlHandOpen = false;
             let drawingIndexTip = null;
@@ -459,7 +604,7 @@
                 handGroup.visible = false;
             }
 
-            // Drawing logic with auto-correction
+            // Drawing logic with auto-correction (unchanged)
             if (drawingIndexTip && controlHandOpen) {
                 const rawX = (1 - drawingIndexTip.x) * canvas.width;
                 const rawY = (drawingIndexTip.y) * canvas.height;
@@ -476,7 +621,7 @@
                     const nextSmoothedX = alpha * rawX + (1 - alpha) * prevSmoothedX;
                     const nextSmoothedY = alpha * rawY + (1 - alpha) * prevSmoothedY;
                     ctx.lineTo(nextSmoothedX, nextSmoothedY);
-                    ctx.strokeStyle = 'white';
+                    ctx.strokeStyle = currentColor; // Use dynamic color
                     ctx.stroke();
                     prevSmoothedX = nextSmoothedX;
                     prevSmoothedY = nextSmoothedY;
@@ -508,6 +653,88 @@
             // Render Three.js scene
             renderer.render(scene, camera);
         }
+
+        // Initialize color feedback elements
+        const colorName = document.getElementById('colorName');
+        const colorIndicator = document.getElementById('colorIndicator');
+
+        // Set initial color feedback
+        colorName.textContent = currentColor.charAt(0).toUpperCase() + currentColor.slice(1);
+        colorIndicator.style.backgroundColor = currentColor;
+
+        // Speech Recognition Setup
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            let timeoutId;
+
+            // Function to update both cc elements
+            const updateCC = (text) => {
+                document.getElementById('video-cc').textContent = text;
+            };
+
+            recognition.addEventListener('start', () => {
+                updateCC('Listening...');
+            });
+
+            recognition.addEventListener('result', (event) => {
+                const result = event.results[0];
+                if (result.isFinal) {
+                    const transcript = result[0].transcript.trim().toLowerCase();
+                    updateCC(transcript);
+
+                    // Handle color change command
+                    const colorMatch = transcript.match(/render\s*change\s*paint\s*color\s*to\s*(\w+)/i);
+                    if (colorMatch) {
+                        const color = colorMatch[1];
+                        currentColor = color;
+                        colorName.textContent = color.charAt(0).toUpperCase() + color.slice(1);
+                        colorIndicator.style.backgroundColor = color;
+                        console.log(`Paint color changed to ${color}`);
+                    }
+
+                    // Handle export command
+                    if (transcript.match(/render\s*export\s*image/i)) {
+                        exportCanvasAsPNG();
+                        updateCC('Exporting image...');
+                        console.log('Canvas exported as PNG');
+                    }
+
+                    // Handle clear canvas command
+                    if (transcript.match(/render\s*erase\s*all/i)) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        updateCC('Clearing canvas...');
+                        console.log('Canvas cleared');
+                    }
+                } else {
+                    const transcript = result[0].transcript.trim();
+                    updateCC(transcript);
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        recognition.stop();
+                    }, 2000);
+                }
+            });
+
+            recognition.addEventListener('error', (event) => {
+                console.error('Speech recognition error:', event.error);
+                updateCC(`Error: ${event.error}`);
+            });
+
+            recognition.addEventListener('end', () => {
+                recognition.start();
+            });
+
+            recognition.start();
+        } else {
+            console.log('Speech recognition not supported');
+            updateCC('Speech recognition not supported');
+        }
     </script>
 </body>
+
 </html>
